@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <cstdint>
 
-long int b(long int n, long int m) {
+long int calc(long int n, long int m) {
     if (m > n) {
         return 0;
     }
@@ -18,7 +18,7 @@ long int b(long int n, long int m) {
     if (m == 3) {
         return (n * n + 3) / 12;
     }
-    return b(n - m, m) + b(n - 1, m - 1);
+    return calc(n - m, m) + calc(n - 1, m - 1);
 }
 
 int main() {
@@ -30,7 +30,7 @@ int main() {
     long int count = 0;
 #pragma omp parallel
     {
-        long int v = b(n - m, omp_get_thread_num() + 1);
+        long int v = calc(n - m, omp_get_thread_num() + 1);
 #pragma omp atomic
         count = count + v;
     }

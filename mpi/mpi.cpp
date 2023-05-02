@@ -2,7 +2,7 @@
 #include <iostream>
 #include "mpi.h"
 
-long int b(long int n, long int m) {
+long int calc(long int n, long int m) {
     if (m > n) {
         return 0;
     }
@@ -18,14 +18,13 @@ long int b(long int n, long int m) {
     if (m == 3) {
         return (n * n + 3) / 12;
     }
-    return b(n - m, m) + b(n - 1, m - 1);
+    return calc(n - m, m) + calc(n - 1, m - 1);
 }
 
 int main(int argc, char *argv[]) {
 
     int n = 200;
     int m = 17;
-//    long int count = b(n, m);
 
     int ProcNum, ProcRank;
     long int RecvRank;
@@ -36,14 +35,14 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
     double time = MPI_Wtime();
     if (ProcRank == 0) {
-        long int v = b(n - m, ProcRank + 1);
+        long int v = calc(n - m, ProcRank + 1);
         for (int i = 1; i < ProcNum; i++) {
             MPI_Recv(&RecvRank, 1, MPI_LONG, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &Status);
             v = v + RecvRank;
         }
         printf("Count: %ld\n", v);
     } else {
-        long int v = b(n - m, ProcRank + 1);
+        long int v = calc(n - m, ProcRank + 1);
         MPI_Send(&v, 1, MPI_LONG, 0, ProcRank, MPI_COMM_WORLD);
     }
 
