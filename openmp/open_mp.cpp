@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <omp.h>
-#include <cstdint>
 #include <ctime>
 
 long int calc(long int n, long int m) {
@@ -37,7 +36,7 @@ int main() {
         count = count + v;
     }
     time(&end);
-    printf("%ld\n", count);
+    printf("Count: %ld\n", count);
     printf("The time: %f seconds\n", difftime(end, start));
     return 0;
 }

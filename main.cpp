@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <ctime>
-#include <cstdlib>
 
 long int calc(int n, int m) {
     if (m > n) {
@@ -31,7 +30,7 @@ int main() {
     time(&start);
     long int count = calc(n, m);
     time(&end);
-    printf("%ld\n", count);
+    printf("Count: %ld\n", count);
     printf("The time: %f seconds\n", difftime(end, start));
     return 0;
 }
