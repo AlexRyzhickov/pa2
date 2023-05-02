@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <omp.h>
 #include <cstdint>
+#include <ctime>
 
 long int calc(long int n, long int m) {
     if (m > n) {
@@ -26,7 +27,8 @@ int main() {
     int m = 17;
     printf("num_threads %d\n", m);
     omp_set_num_threads(m);
-
+    time_t start, end;
+    time(&start);
     long int count = 0;
 #pragma omp parallel
     {
@@ -34,6 +36,8 @@ int main() {
 #pragma omp atomic
         count = count + v;
     }
+    time(&end);
     printf("%ld\n", count);
+    printf("The time: %f seconds\n", difftime(end, start));
     return 0;
 }

@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (ProcRank == 0) {
-        printf("time: %.10lf\n", MPI_Wtime() - time);
+        printf("The time: %.10lf\n", MPI_Wtime() - time);
     }
 
 
