@@ -4,9 +4,9 @@
 #include <ctime>
 #include <stdio.h>
 
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
+cudaError_t addWithCuda(int* c, const int* a, const int* b, unsigned int size);
 
-__device__ __host__ long int b2(long int n, long int m) {
+__device__ __host__ long int calc(long int n, long int m) {
     if (m > n) {
         return 0;
     }
@@ -22,13 +22,13 @@ __device__ __host__ long int b2(long int n, long int m) {
     if (m == 3) {
         return (n * n + 3) / 12;
     }
-    return b2(n - m, m) + b2(n - 1, m - 1);
+    return calc(n - m, m) + calc(n - 1, m - 1);
 }
 
-__global__ void addKernel(int *c, const int *a, const int *b)
+__global__ void addKernel(int* c, const int* a, const int* b)
 {
     int i = threadIdx.x;
-    c[i] = b2(a[i], b[i]);
+    c[i] = calc(a[i], b[i]);
 }
 
 int main()
@@ -42,8 +42,8 @@ int main()
 
     for (int i = arraySize; i > 0; i--)
     {
-        a[i-1] = n - m;
-        b[i-1] = i;
+        a[i - 1] = n - m;
+        b[i - 1] = i;
     }
 
     time_t start, end;
@@ -64,7 +64,6 @@ int main()
     }
 
     printf("Count: %d \n", count);
-    printf("Count: %ld\n", count);
     printf("The time: %f seconds\n", difftime(end, start));
 
     // cudaDeviceReset must be called before exiting in order for profiling and
@@ -79,11 +78,11 @@ int main()
 }
 
 // Helper function for using CUDA to add vectors in parallel.
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
+cudaError_t addWithCuda(int* c, const int* a, const int* b, unsigned int size)
 {
-    int *dev_a = 0;
-    int *dev_b = 0;
-    int *dev_c = 0;
+    int* dev_a = 0;
+    int* dev_b = 0;
+    int* dev_c = 0;
     cudaError_t cudaStatus;
 
     // Choose which GPU to run on, change this on a multi-GPU system.
@@ -126,7 +125,7 @@ cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
     }
 
     // Launch a kernel on the GPU with one thread for each element.
-    addKernel<<<1, size>>>(dev_c, dev_a, dev_b);
+    addKernel << <1, size >> > (dev_c, dev_a, dev_b);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
@@ -134,7 +133,7 @@ cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
         fprintf(stderr, "addKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
         goto Error;
     }
-    
+
     // cudaDeviceSynchronize waits for the kernel to finish, and returns
     // any errors encountered during the launch.
     cudaStatus = cudaDeviceSynchronize();
@@ -154,6 +153,6 @@ Error:
     cudaFree(dev_c);
     cudaFree(dev_a);
     cudaFree(dev_b);
-    
+
     return cudaStatus;
 }
